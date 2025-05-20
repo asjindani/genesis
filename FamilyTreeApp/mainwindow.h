@@ -17,11 +17,9 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
+    MainWindow(QWidget *parent = nullptr, Tree* tree = nullptr);
     ~MainWindow();
-
-    void addToPersonList(Person* person);
-    void addToFamilyList(Family* family);
+    Tree* tree;
 
 private slots:
     void on_buttonNewPerson_clicked();
@@ -34,14 +32,33 @@ private slots:
 
     void on_removeFamily_clicked();
 
-    void refreshFamilyList();
-    void refreshPersonList();
+    void on_familyList_itemDoubleClicked(QListWidgetItem *item);
+
+    void on_actionNewTree_triggered();
+
+    void on_actionSaveTree_triggered();
+
+    void on_actionLoadTree_triggered();
+
+    void on_actionCloseTree_triggered();
+
+    void on_selectHomePerson_clicked();
+
+    void on_visualizeTree_clicked();
 
 private:
     Ui::MainWindow *ui;
 
-    Tree* tree;
     int personID;
     int familyID;
+
+    void addToPersonList(Person* person);
+    void addToFamilyList(Family* family);
+
+    void refreshFamilyList();
+    void refreshPersonList();
+
+    void updateListItem(QListWidget* list, const int& id, const string& text);
+
 };
 #endif // MAINWINDOW_H

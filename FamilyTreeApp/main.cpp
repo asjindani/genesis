@@ -8,16 +8,18 @@
 #include <QSqlError>
 #include <QDebug>
 
-void setupDatabase();
-
 int main(int argc, char *argv[])
 {
 
     QApplication a(argc, argv);
 
-    MainWindow w;
+    Tree tree;
+    tree.connect("genesis.db");
+    tree.load();
 
-    w.setWindowTitle("Genealogy App");
+    MainWindow w(nullptr, &tree);
+
+    w.setWindowTitle("Genesis");
     w.setWindowIcon(QIcon(":/icon.png"));
     w.show();
 

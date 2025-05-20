@@ -4,7 +4,7 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include <QDebug>
-
+#include <QDate>
 #include <QVariant>
 #include <QMetaType>
 
@@ -24,7 +24,7 @@ Family::~Family() {}
 
 void Family::addChild(Person* child, const Relation& fatherRelation, const Relation& motherRelation) {
     children.push_back({child, fatherRelation, motherRelation});
-    child->addToBirthFamily(this);
+    // child->addToBirthFamily(this);
 }
 
 void Family::setID(const int& id) {
@@ -57,9 +57,8 @@ ChildRelation Family::getChildRelation(const int& ID) const {
     for (const auto& childRelation : children)
         if (childRelation.person->getID() == ID)
             return childRelation;
-    throw runtime_error("Child not found in the family");
+    return {nullptr, Relation::Unknown, Relation::Unknown};
 }
-
 
 // OUTPUT
 
@@ -77,26 +76,11 @@ ostream& operator<<(ostream& out, const Family& family) {
 }
 
 void Family::setFather(Person* person) {
-    if (father)
-        father->removeMarriedFamily(this);
-
     father = person;
-    if (father) {
-        if (father->getGender() != Gender::Male)
-            throw runtime_error("Father must be male!");
-        father->addToMarriedFamily(this);
-    }
 }
 
 void Family::setMother(Person* person) {
-    if (mother) mother->removeMarriedFamily(this);
-
     mother = person;
-    if (mother) {
-        if (mother->getGender() != Gender::Female)
-            throw runtime_error("Mother must be female!");
-        mother->addToMarriedFamily(this);
-    }
 }
 
 void Family::removeChild(Person* person) {
@@ -115,17 +99,35 @@ void Family::deleteChild(Person* person) {
 }
 
 string Family::getRepr() const {
-    string s = "[" + to_string(id) + "]";
+    // string s = "[" + to_string(id) + "]";
 
     string fatherName = (father ? father->getName() : "");
     string motherName = (mother ? mother->getName() : "");
 
     if (!fatherName.empty())
         if (!motherName.empty())
-            return s + ' ' + fatherName + " & " + motherName;
+            return fatherName + " & " + motherName;
         else
-            return s + ' ' + fatherName;
+            return fatherName;
     if (!motherName.empty())
-        return s + ' ' + motherName;
-    return s;
+        return motherName;
+    return "[Family]";
+}
+
+bool Family::hasChild(const int& id) {
+    for (const auto& child : children)
+        if (child.person->getID() == id)
+            return true;
+    return false;
+}
+
+vector<Person*> Family::getChildren() const {
+    vector<Person*> result;
+    for (const auto& child : children)
+        result.push_back(child.person);
+    return result;
+}
+
+QDate Family::getMarriageDate() const {
+    return marriageDate;
 }

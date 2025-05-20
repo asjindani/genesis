@@ -34,7 +34,7 @@ Gender Person::getGender() const {
     return gender;
 }
 
-Date Person::getBirthDate() const {
+QDate Person::getBirthDate() const {
     return birthDate;
 }
 
@@ -56,7 +56,11 @@ void Person::setGender(const Gender& gender) {
     this->gender = gender;
 }
 
-void Person::setBirthDate(const Date& date) {
+void Person::setGender(const string& gender) {
+    setGender(GenderCast::fromString(gender));
+}
+
+void Person::setBirthDate(const QDate& date) {
     birthDate = date;
 }
 
@@ -69,10 +73,11 @@ string Person::getName() const {
 }
 
 string Person::getRepr() const {
-    string name = getName();
-    if (name.empty())
-        return '[' + to_string(id) + ']';
-    return "[" + to_string(id) + "] " + name;
+    return getName();
+    // string name = getName();
+    // if (name.empty())
+    //     return '[' + to_string(id) + ']';
+    // return "[" + to_string(id) + "] " + name;
 }
 
 // void Person::setParents(Person* father, Person* mother, const Relation& type) {
@@ -96,31 +101,31 @@ string Person::getRepr() const {
 //         throw runtime_error("Not implemented");
 // }
 
-void Person::addToBirthFamily(Family* family) {
-    birthFamilies.push_back(family);
-}
+// void Person::addToBirthFamily(Family* family) {
+//     birthFamilies.push_back(family);
+// }
 
-void Person::addToMarriedFamily(Family* family) {
-    marriedFamilies.push_back(family);
-}
+// void Person::addToMarriedFamily(Family* family) {
+//     marriedFamilies.push_back(family);
+// }
 
-void Person::removeBirthFamily(Family* family) {
-    // for (auto it = birthFamilies.begin(); it != birthFamilies.end(); it++) {
-    //     if ()
-    // }
+// void Person::removeBirthFamily(Family* family) {
+//     // for (auto it = birthFamilies.begin(); it != birthFamilies.end(); it++) {
+//     //     if ()
+//     // }
 
-    auto it = std::find(birthFamilies.begin(), birthFamilies.end(), family);
+//     auto it = std::find(birthFamilies.begin(), birthFamilies.end(), family);
 
-    if (it != birthFamilies.end())
-        birthFamilies.erase(it);
-}
+//     if (it != birthFamilies.end())
+//         birthFamilies.erase(it);
+// }
 
-void Person::removeMarriedFamily(Family* family) {
-    auto it = find(marriedFamilies.begin(), marriedFamilies.end(), family);
+// void Person::removeMarriedFamily(Family* family) {
+//     auto it = find(marriedFamilies.begin(), marriedFamilies.end(), family);
 
-    if (it != marriedFamilies.end())
-        marriedFamilies.erase(it);
-}
+//     if (it != marriedFamilies.end())
+//         marriedFamilies.erase(it);
+// }
 
 
 
@@ -159,61 +164,47 @@ void Person::removeMarriedFamily(Family* family) {
 //     return s;
 // }
 
-vector<FamilyRecord> Person::getBirthFamilyRecords() const {
-    vector<FamilyRecord> records;
+// vector<FamilyRecord> Person::getBirthFamilyRecords() const {
+//     vector<FamilyRecord> records;
 
-    for (const auto& family : birthFamilies) {
-        FamilyRecord record;
+//     for (const auto& family : birthFamilies) {
+//         FamilyRecord record;
 
-        record.father = family->getFather();
-        record.mother = family->getMother();
+//         record.father = family->getFather();
+//         record.mother = family->getMother();
 
-        auto self = family->getChildRelation(id);
-        record.fatherRelation = self.fatherRelation;
-        record.motherRelation = self.motherRelation;
+//         auto self = family->getChildRelation(id);
+//         record.fatherRelation = self.fatherRelation;
+//         record.motherRelation = self.motherRelation;
 
-        for (const auto& sibling : family->getChildRelations()) {
+//         for (const auto& sibling : family->getChildRelations()) {
 
-            // Excluding self from siblings
-            if (sibling.person->getID() == id)
-                continue;
+//             // Excluding self from siblings
+//             if (sibling.person->getID() == id)
+//                 continue;
 
-            SiblingType type = SiblingType::Step;
+//             SiblingType type = SiblingType::Step;
 
-            if (record.father && self.fatherRelation == Relation::Biological && sibling.fatherRelation == Relation::Biological)
-                type = SiblingType::Half;
+//             if (record.father && self.fatherRelation == Relation::Biological && sibling.fatherRelation == Relation::Biological)
+//                 type = SiblingType::Half;
 
-            if (record.mother && self.motherRelation == Relation::Biological && sibling.motherRelation == Relation::Biological)
-                if (type == SiblingType::Half)
-                    type = SiblingType::Full;
-                else
-                    type = SiblingType::Half;
+//             if (record.mother && self.motherRelation == Relation::Biological && sibling.motherRelation == Relation::Biological)
+//                 if (type == SiblingType::Half)
+//                     type = SiblingType::Full;
+//                 else
+//                     type = SiblingType::Half;
 
-            record.siblings.push_back(sibling.person);
-            record.siblingRelations.push_back(type);
-        }
-        records.push_back(record);
-    }
-    return records;
-}
+//             record.siblings.push_back(sibling.person);
+//             record.siblingRelations.push_back(type);
+//         }
+//         records.push_back(record);
+//     }
+//     return records;
+// }
 
-vector<Family*> Person::getMarriedFamilyRecords() const {
-    return marriedFamilies;
-}
-
-set<Person*> Person::getDescendants() const {
-    set<Person*> descendants;
-
-    for (const auto& family : getMarriedFamilyRecords()) {
-        for (const auto& child : family->getChildRelations()) {
-            descendants.insert(child.person);
-            set<Person*> s = child.person->getDescendants();
-            descendants.insert(s.begin(), s.end());
-        }
-    }
-
-    return descendants;
-}
+// vector<Family*> Person::getMarriedFamilyRecords() const {
+//     return marriedFamilies;
+// }
 
 
 // OUTPUT
@@ -226,7 +217,7 @@ ostream& operator<<(ostream& out, const Relation& relation) {
     case Relation::Foster:
         out << "Foster";
         break;
-    case Relation::Adopt:
+    case Relation::Adoptive:
         out << "Adoptive";
         break;
     }
@@ -258,58 +249,58 @@ ostream& operator<<(ostream& out, const Person& person) {
     out << "\tName: " << person.getName() << endl;
     out << endl;
 
-    for (const auto& record : person.getBirthFamilyRecords()) {
-        out << "\tParents: ";
-        if (record.father) out << record.father->getName() << " (" << record.fatherRelation << " Father) ";
-        if (record.mother) out << record.mother->getName() << " (" << record.motherRelation << " Mother)";
-        out << endl;
+    // for (const auto& record : person.getBirthFamilyRecords()) {
+    //     out << "\tParents: ";
+    //     if (record.father) out << record.father->getName() << " (" << record.fatherRelation << " Father) ";
+    //     if (record.mother) out << record.mother->getName() << " (" << record.motherRelation << " Mother)";
+    //     out << endl;
 
-        out << "\tSiblings: ";
-        for (int i = 0; i < record.siblings.size(); i++) {
-            Person* sibling = record.siblings[i];
-            SiblingType type = record.siblingRelations[i];
+    //     out << "\tSiblings: ";
+    //     for (int i = 0; i < record.siblings.size(); i++) {
+    //         Person* sibling = record.siblings[i];
+    //         SiblingType type = record.siblingRelations[i];
 
-            out << sibling->getName() << " (" << type << " ";
-            switch (sibling->gender) {
-            case Gender::Male:
-                out << "Brother";
-                break;
-            case Gender::Female:
-                out << "Sister";
-                break;
-            case Gender::Unknown:
-                out << "Sibling";
-                break;
-            }
-            out << ") " << endl;
-        }
-        out << endl;
-    }
+    //         out << sibling->getName() << " (" << type << " ";
+    //         switch (sibling->gender) {
+    //         case Gender::Male:
+    //             out << "Brother";
+    //             break;
+    //         case Gender::Female:
+    //             out << "Sister";
+    //             break;
+    //         case Gender::Unknown:
+    //             out << "Sibling";
+    //             break;
+    //         }
+    //         out << ") " << endl;
+    //     }
+    //     out << endl;
+    // }
 
-    for (const auto& family : person.getMarriedFamilyRecords()) {
-        out << "\tPartner: ";
-        if (family->getFather()->getID() != person.getID())
-            out << family->getFather()->getName() << endl;
-        else
-            out << family->getMother()->getName() << endl;
-        out << "\tChildren: ";
-        for (const auto& child : family->getChildRelations()) {
-            out << child.person->getName() << " (";
-            switch (child.person->getGender()) {
-            case Gender::Male:
-                out << "Son";
-                break;
-            case Gender::Female:
-                out << "Daughter";
-                break;
-            case Gender::Unknown:
-                out << "Child";
-                break;
-            }
-            out << ") ";
-        }
-        out << endl;
-    }
+    // for (const auto& family : person.getMarriedFamilyRecords()) {
+    //     out << "\tPartner: ";
+    //     if (family->getFather()->getID() != person.getID())
+    //         out << family->getFather()->getName() << endl;
+    //     else
+    //         out << family->getMother()->getName() << endl;
+    //     out << "\tChildren: ";
+    //     for (const auto& child : family->getChildRelations()) {
+    //         out << child.person->getName() << " (";
+    //         switch (child.person->getGender()) {
+    //         case Gender::Male:
+    //             out << "Son";
+    //             break;
+    //         case Gender::Female:
+    //             out << "Daughter";
+    //             break;
+    //         case Gender::Unknown:
+    //             out << "Child";
+    //             break;
+    //         }
+    //         out << ") ";
+    //     }
+    //     out << endl;
+    // }
 
     out << endl;
 
@@ -349,3 +340,4 @@ ostream& operator<<(ostream& out, const Person& person) {
     return out;
 }
 
+Person::~Person() {}

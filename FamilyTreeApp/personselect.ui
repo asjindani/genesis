@@ -31,7 +31,11 @@
      </widget>
     </item>
     <item>
-     <widget class="QListWidget" name="personList"/>
+     <widget class="QListWidget" name="personList">
+      <property name="sortingEnabled">
+       <bool>true</bool>
+      </property>
+     </widget>
     </item>
     <item>
      <widget class="QDialogButtonBox" name="buttonBox">

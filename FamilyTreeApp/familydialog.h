@@ -13,10 +13,9 @@ class FamilyDialog : public QDialog
     Q_OBJECT
 
 public:
-    explicit FamilyDialog(QWidget *parent = nullptr);
+    explicit FamilyDialog(QWidget *parent = nullptr, Tree* tree = nullptr, Family* family = nullptr);
     ~FamilyDialog();
 
-    void setTree(Tree* tree);
     Family* getFamily() const;
 
 private slots:

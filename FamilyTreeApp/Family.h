@@ -11,6 +11,8 @@ using namespace std;
 #include "Person.h"
 #include "Event.h"
 
+#include <QDate>
+
 class Family {
 private:
     int id;
@@ -18,6 +20,7 @@ private:
     Person* mother;
     vector<ChildRelation> children;
     // MarriageEvent* marriageEvent;
+    QDate marriageDate;
 
 public:
     Family();
@@ -29,6 +32,7 @@ public:
     void addChild(Person*, const Relation& = Relation::Unknown, const Relation& = Relation::Unknown);
     void removeChild(Person* person);
     void deleteChild(Person* person);
+    bool hasChild(const int& id);
 
     friend std::ostream& operator<<(std::ostream& out, const Family& family);
 
@@ -40,9 +44,15 @@ public:
     Person* getFather() const;
     Person* getMother() const;
     Person* getChild(const int& ID) const;
+
     ChildRelation getChildRelation(const int& ID) const;
     vector<ChildRelation> getChildRelations() const;
+
+    vector<Person*> getChildren() const;
+
     string getRepr() const;
+
+    QDate getMarriageDate() const;
 
     ~Family();
 };
